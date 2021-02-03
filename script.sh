@@ -35,7 +35,7 @@ MB_ENCRYPTION_SECRET_KEY=$(openssl rand -base64 24)
 
 read -p "¿Todos los datos son correctos? (S/s) " -n 1 -r
 echo    # (optional) move to a new line
-if [[ ! $REPLY =~ ^[Ss]$ ]]
+if [[ $REPLY =~ ^[Ss]$ ]]
 then
 apt update -y
 
