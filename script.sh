@@ -1,10 +1,10 @@
 #!/usr/bin/env bash
 
-apt update && Y
+apt update -y
 
 if [ $(dpkg-query -W -f='${Status}' openjdk-8-jre-headless 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
-  apt install openjdk-8-jre-headless && Y
+  apt install openjdk-8-jre-headless -y
 fi
 
 MB_FOLDER=/opt/metabase
