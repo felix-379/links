@@ -16,10 +16,10 @@ MB_DB_USER=$REPLY
 
 while true; do
   echo -n "Password de la base de datos: "
-  read -s -p 
+  read -s 
   MB_DB_PASS=$REPLY
   echo -n "Confirmar password: "
-  read -s -p 
+  read -s 
   MB_DB_PASS_CONFIRM=$REPLY
    echo
     [ "$MB_DB_PASS" = "$MB_DB_PASS_CONFIRM" ] && break
