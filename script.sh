@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-apt update
+apt update && Y
 
 if [ $(dpkg-query -W -f='${Status}' openjdk-8-jre-headless 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
