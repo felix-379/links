@@ -37,6 +37,7 @@ read -p "¿Todos los datos son correctos? (S/s) " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Ss]$ ]]
 then
+
 apt update -y
 
 # Check if JRE is already installed.
@@ -49,6 +50,12 @@ fi
 if [ $(dpkg-query -W -f='${Status}' certbot 2>/dev/null | grep -c "ok installed") -eq 0 ];
 then
   apt install certbot -y
+fi
+
+# Check if Nginx is already installed.
+if [ $(dpkg-query -W -f='${Status}' nginx 2>/dev/null | grep -c "ok installed") -eq 0 ];
+then
+  apt install nginx -y
 fi
 
 # Check if postgreSQL is already installed.
@@ -76,7 +83,56 @@ else
   echo "El archivo $MB_FILE ya existe"
 fi
 
-echo "Proceso finalizado"
+# Create an unprivileged user to run Metabase and give him acces to app and logs
+groupadd -r metabase
+useradd -r -s /bin/false -g metabase metabase
+chown -R metabase:metabase $MB_FOLDER
+touch /var/log/metabase.log
+chown metabase:metabase /var/log/metabase.log
+touch /etc/default/metabase
+chmod 640 /etc/default/metabase
+
+# Creating Metabase service file
+touch /etc/systemd/system/metabase.service
+
+echo "[Unit]
+Description=Metabase server
+After=syslog.target
+After=network.target
+   
+[Service]
+WorkingDirectory=MB_FOLDER
+ExecStart=/usr/bin/java -jar MB_FILE
+EnvironmentFile=/etc/default/metabase
+User=metabase
+Type=simple
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=metabase
+SuccessExitStatus=143
+TimeoutStopSec=120
+Restart=always
+   
+[Install]
+WantedBy=multi-user.target" | tee /etc/systemd/system/metabase.service
+
+# Creating syslog conf
+touch /etc/rsyslog.d/metabase.conf
+
+echo "if $programname == 'metabase' then /var/log/metabase.log & stop" | tee /etc/rsyslog.d/metabase.conf
+systemctl restart rsyslog.service
+
+# Writing on Metabase config file
+echo "MB_JETTY_HOST=0.0.0.0
+MB_JETTY_PORT=3000
+MB_DB_TYPE=postgres
+MB_DB_DBNAME=$MB_DB_DBNAME
+MB_DB_HOST=$MB_DB_HOST
+MB_DB_PORT=$MB_DB_PORT
+MB_DB_USER=$MB_DB_USER
+MB_DB_PASS=$MB_DB_PASS
+MB_ENCRYPTION_SECRET_KEY=$MB_ENCRYPTION_SECRET_KEY" | tee /etc/default/metabase
+
 
 else
 
