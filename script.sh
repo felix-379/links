@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
+# Metabase Boilerplate. Copyright (c) 2021, https://www.kemok.io
+
+set -o errexit
+set -o nounset
+set -o pipefail
+
 echo "Proceso de instalación de Metabase y dependencias. Ingresa las siguientes variables:"
 
 read -p "Host de la base de datos [default=127.0.0.1]: " MB_DB_HOST
