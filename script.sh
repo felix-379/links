@@ -1,34 +1,20 @@
 #!/usr/bin/env bash
 
-echo "Ingresa las siguientes variables"
+echo "Proceso de instalación de Metabase y dependencias. Ingresa las siguientes variables:"
 
-echo -n "Nombre de la base de datos: "
-read -r 
-MB_DB_DBNAME=$REPLY
+read -p "Host de la base de datos [default=127.0.0.1]: " MB_DB_HOST
+MB_DB_HOST=${MB_DB_HOST:-127.0.0.1}
 
-echo -n "Puerto de la base de datos: "
-read -r 
-MB_DB_PORT=$REPLY
+read -p "Puerto de la base de datos [default=5432]: " MB_DB_PORT
+MB_DB_PORT=${MB_DB_PORT:-5432}
 
-echo -n "Usuario de la base de datos: "
-read -r 
-MB_DB_USER=$REPLY
+read -p "Nombre de la base de datos [default=metabase]: " MB_DB_DBNAME
+MB_DB_DBNAME=${MB_DB_DBNAME:-metabase}
 
-while true; do
-  echo -n "Password de la base de datos: "
-  read -s 
-  MB_DB_PASS=$REPLY
-  echo -n "Confirmar password: "
-  read -s 
-  MB_DB_PASS_CONFIRM=$REPLY
-   echo
-    [ "$MB_DB_PASS" = "$MB_DB_PASS_CONFIRM" ] && break
-    echo "Password no coincide"
-done
+read -p "Usuario de la base de datos [default=metabase_user]: " MB_DB_USER
+MB_DB_USER=${MB_DB_USER:-metabase_user}
 
-echo -n "Host de la base de datos: "
-read -r 
-MB_DB_HOST=$REPLY
+MB_DB_PASS=$(openssl rand -base64 24)
 
 MB_ENCRYPTION_SECRET_KEY=$(openssl rand -base64 24)
 
