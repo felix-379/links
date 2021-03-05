@@ -69,11 +69,11 @@ fi
 
 # Creating DB and USERDB
 sudo -i -u postgres <<EOF
-psql -c "drop database if exists testiedb"
-psql -c "drop user if exists testie"
-psql -c "CREATE USER testie WITH PASSWORD '123';"
+psql -c "drop database if exists $MB_DB_DBNAME"
+psql -c "drop user if exists $MB_DB_USER"
+psql -c "CREATE USER $MB_DB_USER WITH PASSWORD '$MB_DB_PASS';"
 createdb testiedb
-psql -c "GRANT ALL PRIVILEGES ON DATABASE testiedb TO testie;"
+psql -c "GRANT ALL PRIVILEGES ON DATABASE $MB_DB_DBNAME TO $MB_DB_USER;"
 exit
 EOF
 
@@ -143,6 +143,7 @@ MB_DB_USER=$MB_DB_USER
 MB_DB_PASS=$MB_DB_PASS
 MB_ENCRYPTION_SECRET_KEY=$MB_ENCRYPTION_SECRET_KEY" | tee /etc/default/metabase
 
+#Nginx configuration
 
 else
 
