@@ -67,6 +67,16 @@ then
   apt install postgresql-11 -y
 fi
 
+# Creating DB and USERDB
+sudo -i -u postgres <<EOF
+psql -c "drop database if exists testiedb"
+psql -c "drop user if exists testie"
+psql -c "CREATE USER testie WITH PASSWORD '123';"
+createdb testiedb
+psql -c "GRANT ALL PRIVILEGES ON DATABASE testiedb TO testie;"
+exit
+EOF
+
 # Check if MB directory and file app already exists.
 MB_FOLDER=/opt/metabase
 MB_FILE=/opt/metabase/metabase.jar
